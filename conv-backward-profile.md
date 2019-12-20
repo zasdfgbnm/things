@@ -22,6 +22,10 @@ torch.cuda.profiler.stop()
 
 result
 ```
+nvprof --profile-from-start on --print-gpu-trace python conv-bias2.py
+```
+
+```
 4477== NVPROF is profiling process 24477, command: python conv-bias2.py
 ==24477== Profiling application: python conv-bias2.py
 ==24477== Profiling result:
