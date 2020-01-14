@@ -27,8 +27,11 @@ def get_asm(cubin):
     for l in lines:
         if len(l.strip()) > 0:
             if l.startswith('//-'):
-                symbol = l.split()[1].split('.')[2]
-                codes[symbol] = []
+                try:
+                    symbol = l.split()[1].split('.')[2]
+                    codes[symbol] = []
+                except IndexError:
+                    pass
             else:
                 codes[symbol].append(l)
     for k, v in codes.items():
