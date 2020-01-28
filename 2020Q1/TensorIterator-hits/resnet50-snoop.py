@@ -8,17 +8,15 @@ torchsnooper.register_snoop()
 
 model = torchvision.models.resnet50().cuda()
 input_ = torch.randn(64, 3, 224, 224, device="cuda")
+target = torch.empty(64, dtype=torch.long, device="cuda").random_(1000)
+loss = torch.nn.CrossEntropyLoss()
 torch.cuda.synchronize()
 
 output_ = model(input_)
 torch.cuda.synchronize()
 print("==============================")
 
-target = torch.empty(64, dtype=torch.long, device="cuda").random_(1000)
-loss = torch.nn.CrossEntropyLoss()
 torch.cuda.synchronize()
-
-print("==============================")
 l = loss(output_, target)
 l.backward()
 torch.cuda.synchronize()
@@ -64,13 +62,14 @@ class Adam(torch.optim.Optimizer):
         for group in self.param_groups:
             group.setdefault('amsgrad', False)
 
-    @snoop
+    # @snoop
     def step(self, closure=None):
         """Performs a single optimization step.
         Arguments:
             closure (callable, optional): A closure that reevaluates the model
                 and returns the loss.
         """
+
         loss = None
         if closure is not None:
             loss = closure()
@@ -79,11 +78,11 @@ class Adam(torch.optim.Optimizer):
             for p in group['params']:
                 if p.grad is None:
                     continue
+
                 grad = p.grad.data
                 if grad.is_sparse:
                     raise RuntimeError('Adam does not support sparse gradients, please consider SparseAdam instead')
                 amsgrad = group['amsgrad']
-
                 state = self.state[p]
 
                 # State initialization
@@ -111,6 +110,9 @@ class Adam(torch.optim.Optimizer):
 
                 # Decay the first and second moment running average coefficient
                 exp_avg.mul_(beta1).add_(1 - beta1, grad)
+                print(type(beta1))
+                print(grad.dtype)
+                return
                 exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
                 if amsgrad:
                     # Maintains the maximum of all 2nd moment running avg. till now
