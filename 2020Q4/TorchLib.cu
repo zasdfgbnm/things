@@ -3,16 +3,9 @@
 #include <type_traits>
 #include <array>
 
-struct Type;
-using TypePtr = std::shared_ptr<Type>;
-
-struct Type : std::enable_shared_from_this<Type> {
-};
-
-
 struct BoolType;
 using BoolTypePtr = std::shared_ptr<BoolType>;
-struct BoolType : public Type {
+struct BoolType {
   static BoolTypePtr get() {
     return BoolTypePtr(new BoolType());
   }
@@ -20,13 +13,13 @@ struct BoolType : public Type {
 
 template <typename T>
 struct getTypePtr_ final {
-  static TypePtr call() {
+  static BoolTypePtr call() {
     return BoolType::get();
   }
 };
 
 struct ArgumentDef final {
-  using GetTypeFn = TypePtr();
+  using GetTypeFn = BoolTypePtr();
   GetTypeFn* getTypeFn;
 };
 
@@ -34,7 +27,7 @@ template <typename... Ts, size_t... Is>
 constexpr std::array<ArgumentDef, sizeof...(Ts)> createArgumentVectorFromTypes(std::index_sequence<Is...>) {
   return (
     // Create the return value
-    std::array<ArgumentDef, sizeof...(Ts)>{{ArgumentDef{&getTypePtr_<std::decay_t<Ts>>::call}...}}
+    std::array<ArgumentDef, sizeof...(Ts)>{{ArgumentDef{&getTypePtr_<Ts>::call}...}}
   );
 }
 
