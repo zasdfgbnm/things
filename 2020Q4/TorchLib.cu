@@ -1,4 +1,4 @@
-#include <memory>
+#include <utility>
 #include <array>
 
 template <typename T>
@@ -11,7 +11,7 @@ struct ArgumentDef final {
   GetTypeFn* getTypeFn;
 };
 
-template <typename... Ts, size_t... Is>
+template <typename... Ts, std::size_t... Is>
 constexpr std::array<ArgumentDef, sizeof...(Ts)> createArgumentVectorFromTypes(std::index_sequence<Is...>) {
   return (
     std::array<ArgumentDef, sizeof...(Ts)>{{ArgumentDef{&getTypePtr_<Ts>}...}}
