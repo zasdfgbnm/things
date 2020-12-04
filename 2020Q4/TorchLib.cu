@@ -10,7 +10,6 @@ enum class TypeKind {
 
 struct Type;
 using TypePtr = std::shared_ptr<Type>;
-using ConstTypePtr = std::shared_ptr<const Type>;
 
 struct Type : std::enable_shared_from_this<Type> {
 private:
@@ -18,14 +17,6 @@ private:
 
 protected:
  Type(TypeKind kind) : kind_(kind) {}
-
-public:
-
- TypeKind kind() const {
-   return kind_;
- }
-
- virtual ~Type() = default;
 };
 
 
