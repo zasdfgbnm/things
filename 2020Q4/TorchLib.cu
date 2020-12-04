@@ -18,7 +18,6 @@ struct ArgumentDef final {
 template <typename... Ts, size_t... Is>
 constexpr std::array<ArgumentDef, sizeof...(Ts)> createArgumentVectorFromTypes(std::index_sequence<Is...>) {
   return (
-    // Create the return value
     std::array<ArgumentDef, sizeof...(Ts)>{{ArgumentDef{&getTypePtr_<Ts>}...}}
   );
 }
