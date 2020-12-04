@@ -3,23 +3,17 @@
 #include <type_traits>
 #include <array>
 
-struct BoolType;
-using BoolTypePtr = std::shared_ptr<BoolType>;
-struct BoolType {
-  static BoolTypePtr get() {
-    return BoolTypePtr(new BoolType());
-  }
-};
+struct BoolType {};
 
 template <typename T>
 struct getTypePtr_ final {
-  static BoolTypePtr call() {
-    return BoolType::get();
+  static std::shared_ptr<BoolType> call() {
+    return nullptr;
   }
 };
 
 struct ArgumentDef final {
-  using GetTypeFn = BoolTypePtr();
+  using GetTypeFn = std::shared_ptr<BoolType>();
   GetTypeFn* getTypeFn;
 };
 
