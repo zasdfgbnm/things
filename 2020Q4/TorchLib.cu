@@ -2,12 +2,12 @@
 #include <array>
 
 template <typename T>
-std::shared_ptr<bool> getTypePtr_() {
-  return nullptr;
+bool getTypePtr_() {
+  return false;
 }
 
 struct ArgumentDef final {
-  using GetTypeFn = std::shared_ptr<bool>();
+  using GetTypeFn = bool();
   GetTypeFn* getTypeFn;
 };
 
