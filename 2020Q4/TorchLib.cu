@@ -6,11 +6,9 @@
 struct BoolType {};
 
 template <typename T>
-struct getTypePtr_ final {
-  static std::shared_ptr<BoolType> call() {
-    return nullptr;
-  }
-};
+std::shared_ptr<BoolType> getTypePtr_() {
+  return nullptr;
+}
 
 struct ArgumentDef final {
   using GetTypeFn = std::shared_ptr<BoolType>();
@@ -21,7 +19,7 @@ template <typename... Ts, size_t... Is>
 constexpr std::array<ArgumentDef, sizeof...(Ts)> createArgumentVectorFromTypes(std::index_sequence<Is...>) {
   return (
     // Create the return value
-    std::array<ArgumentDef, sizeof...(Ts)>{{ArgumentDef{&getTypePtr_<Ts>::call}...}}
+    std::array<ArgumentDef, sizeof...(Ts)>{{ArgumentDef{&getTypePtr_<Ts>}...}}
   );
 }
 
