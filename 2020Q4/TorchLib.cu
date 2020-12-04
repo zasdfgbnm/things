@@ -3,15 +3,13 @@
 #include <type_traits>
 #include <array>
 
-struct BoolType {};
-
 template <typename T>
-std::shared_ptr<BoolType> getTypePtr_() {
+std::shared_ptr<bool> getTypePtr_() {
   return nullptr;
 }
 
 struct ArgumentDef final {
-  using GetTypeFn = std::shared_ptr<BoolType>();
+  using GetTypeFn = std::shared_ptr<bool>();
   GetTypeFn* getTypeFn;
 };
 
