@@ -1,23 +1,17 @@
 #include <utility>
 #include <array>
 
-template <typename T>
-bool getTypePtr_() {
-  return false;
-}
-
 struct ArgumentDef final {
-  using GetTypeFn = bool();
-  GetTypeFn* getTypeFn;
+  std::size_t i;
 };
 
-template <typename... Ts, std::size_t... Is>
-constexpr std::array<ArgumentDef, sizeof...(Ts)> createArgumentVectorFromTypes(std::index_sequence<Is...>) {
+template <std::size_t... Is>
+constexpr std::array<ArgumentDef, sizeof...(Is)> createArgumentVectorFromTypes(std::index_sequence<Is...>) {
   return (
-    std::array<ArgumentDef, sizeof...(Ts)>{{ArgumentDef{&getTypePtr_<Ts>}...}}
+    std::array<ArgumentDef, sizeof...(Is)>{{ArgumentDef{Is}...}}
   );
 }
 
 int main() {
-    constexpr auto returns = createArgumentVectorFromTypes<bool>(std::make_index_sequence<1>());
+    constexpr auto returns = createArgumentVectorFromTypes(std::make_index_sequence<1>());
 }
