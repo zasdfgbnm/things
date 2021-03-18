@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2021.2.24)  18 MAR 2021 14:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2021.2.24)  18 MAR 2021 14:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -455,27 +455,34 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 160--161
 [][] 
  []
 
-No file randperm.bbl.
-
+(./randperm.bbl)
 Overfull \hbox (43.6306pt too wide) has occurred while \output is active
  \T1/cmr/m/n/7 ON THE CORRECTNESS OF IMPLEMENTING RANDOM PERMUTATION AS SORTING
  RANDOM KEYS []
  []
 
 [4 <./plot.png (PNG copy)>] (./randperm.aux)
-Package rerunfilecheck Info: File `randperm.out' has not changed.
-(rerunfilecheck)             Checksum: 309DED378680D9725956FB9652A53D36;604.
 
+Package rerunfilecheck Warning: File `randperm.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `randperm.out':
+(rerunfilecheck)             Before: 309DED378680D9725956FB9652A53D36;604
+(rerunfilecheck)             After:  B0EA2020D3387AE0574F94B3B496E90B;698.
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 10897 strings out of 479383
- 154078 string characters out of 5875830
+ 10904 strings out of 479383
+ 154172 string characters out of 5875830
  480211 words of memory out of 5000000
- 27697 multiletter control sequences out of 15000+600000
- 413414 words of font info for 54 fonts, out of 8000000 for 9000
+ 27699 multiletter control sequences out of 15000+600000
+ 414100 words of font info for 55 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  79i,10n,85p,344b,388s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/t
@@ -497,11 +504,12 @@ s/type1/public/cm-super/sfbx1000.pfb></usr/share/texmf-dist/fonts/type1/public/
 cm-super/sfcc0800.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfcc10
 00.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/sh
 are/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/share/texmf-dist/
-fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on randperm.pdf (4 pages, 348943 bytes).
+fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf-dist/fonts/type1/pub
+lic/cm-super/sfti0800.pfb>
+Output written on randperm.pdf (4 pages, 368689 bytes).
 PDF statistics:
- 141 PDF objects out of 1000 (max. 8388607)
- 109 compressed objects within 2 object streams
- 10 named destinations out of 1000 (max. 500000)
+ 147 PDF objects out of 1000 (max. 8388607)
+ 114 compressed objects within 2 object streams
+ 12 named destinations out of 1000 (max. 500000)
  38 words of extra memory for PDF output out of 10000 (max. 10000000)
 
