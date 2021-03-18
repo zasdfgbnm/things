@@ -1,0 +1,40 @@
+    {"dtype": torch.int64, "dim": 0, "sizes": [torch.Size([1664, 16]),torch.Size([15348, 16])]}
+    {"dtype": torch.float16, "dim": -1, "sizes": [torch.Size([128, 512]),torch.Size([128, 512])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([0]),torch.Size([128, 16, 1024])]}
+    {"dtype": torch.float16, "dim": 3, "sizes": [torch.Size([16, 16, 128, 1]),torch.Size([16, 16, 128, 128])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([19997, 1024]),torch.Size([3, 1024])]}
+    {"dtype": torch.float16, "dim": 0, "sizes": [torch.Size([19997]),torch.Size([3])]}
