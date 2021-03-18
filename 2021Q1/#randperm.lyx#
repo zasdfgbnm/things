@@ -75,10 +75,6 @@
 
 \begin_body
 
-\begin_layout Section
-The probability of unique keys
-\end_layout
-
 \begin_layout Standard
 To sample 
 \begin_inset Formula $N$
@@ -125,17 +121,7 @@ So the probability of getting non-duplicating keys (the correct case) is
 \end_layout
 
 \begin_layout Standard
-According to a narrowed version of Stirling's formula by Robbins
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-https://doi.org/10.2307/2308012
-\end_layout
-
-\end_inset
-
-
+According to a narrowed version of Stirling's formula according to Robbins
 \begin_inset Formula 
 \[
 \sqrt{2\pi}n^{n+\frac{1}{2}}e^{-n}e^{\frac{1}{12n+1}}\leq n!\leq\sqrt{2\pi}n^{n+\frac{1}{2}}e^{-n}e^{\frac{1}{12n}}
@@ -154,7 +140,7 @@ we then have
 which simplify to
 \begin_inset Formula 
 \[
-\frac{M^{M+\frac{1}{2}}\cdot e^{-N}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\leq P\left(M,N\right)\leq\frac{M^{M+\frac{1}{2}}\cdot e^{-N}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}}\cdot e^{\frac{1}{12M}-\frac{1}{12\left(M-N\right)+1}}
+\frac{M^{M+\frac{1}{2}}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}e^{N}}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\leq P\left(M,N\right)\leq\frac{M^{M+\frac{1}{2}}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}e^{N}}\cdot e^{\frac{1}{12M}-\frac{1}{12\left(M-N\right)+1}}
 \]
 
 \end_inset
@@ -162,7 +148,7 @@ which simplify to
 so
 \begin_inset Formula 
 \begin{multline*}
-\frac{M^{(M-N)+\frac{1}{2}}\cdot e^{-N}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\leq\\
+\frac{M^{(M-N)+\frac{1}{2}}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}e^{N}}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\leq\\
 \Pr\left[\text{unique keys}\right]\leq\frac{M^{(M-N)+\frac{1}{2}}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}e^{N}}\cdot e^{\frac{1}{12M}-\frac{1}{12\left(M-N\right)+1}}
 \end{multline*}
 
@@ -177,46 +163,27 @@ which simplify to
 
 \end_inset
 
-we will later write the above inequality as
+to guarantee the correctness of the randperm algorithm, we need the left
+ hand size above some threshold
 \begin_inset Formula 
 \[
-f\left(M,N\right)\leq\Pr\left[\text{unique keys}\right]\leq g\left(M,N\right)
+\left(\frac{M}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\geq q
 \]
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Section
-Bound
-\end_layout
-
-\begin_layout Standard
-We want to guarantee that randperm algorithm's succeed probability above
- a certain threshold 
-\begin_inset Formula $\Pr\left[\text{unique keys}\right]\geq q$
-\end_inset
-
-.
- We can achieve this by requiring 
-\begin_inset Formula $f\left(M,N\right)\geq q$
-\end_inset
-
-.
- Note that
-\begin_inset Formula 
-\begin{multline*}
-f\left(M,N\right)=\left(\frac{M}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\geq q\\
-=\left(1+\frac{N}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\geq q
-\end{multline*}
-
-\end_inset
-
-then
+which simplify to
 \begin_inset Formula 
 \[
-\log f\left(M,N\right)=\left(M-N+\frac{1}{2}\right)\log\left(1+\frac{N}{M-N}\right)-N+\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}
+\left(1+\frac{N}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\geq q
+\]
+
+\end_inset
+
+that is
+\begin_inset Formula 
+\[
+\left(M-N+\frac{1}{2}\right)\log\left(1+\frac{N}{M-N}\right)-N+\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}\geq\log\left(q\right)
 \]
 
 \end_inset
@@ -229,7 +196,7 @@ since
 
 \end_inset
 
-
+and
 \begin_inset Formula 
 \[
 M-N+\frac{1}{2}\geq M-N
@@ -237,7 +204,7 @@ M-N+\frac{1}{2}\geq M-N
 
 \end_inset
 
-
+and
 \begin_inset Formula 
 \[
 \frac{1}{12M+1}\geq0
@@ -245,18 +212,19 @@ M-N+\frac{1}{2}\geq M-N
 
 \end_inset
 
-we have
+as long as
 \begin_inset Formula 
-\begin{multline*}
-\log f\left(M,N\right)\geq\left(M-N\right)\left[\frac{N}{M-N}-\frac{1}{2}\left(\frac{N}{M-N}\right)^{2}\right]-N-\frac{1}{12\left(M-N\right)}=-\frac{1}{12}\cdot\frac{6N^{2}+1}{M-N}
-\end{multline*}
+\[
+\left(M-N\right)\left[\frac{N}{M-N}-\frac{1}{2}\left(\frac{N}{M-N}\right)^{2}\right]-N-\frac{1}{12\left(M-N\right)}\geq\log\left(q\right)
+\]
 
 \end_inset
 
-So, as long as
+the original inequality holds.
+ The above inequality simplify to
 \begin_inset Formula 
 \[
--\frac{1}{12}\cdot\frac{6N^{2}+1}{M-N}\geq\log q
+-\frac{1}{12}\cdot\frac{6N^{2}+1}{M-N}\geq\log\left(q\right)
 \]
 
 \end_inset
@@ -264,28 +232,12 @@ So, as long as
 that is
 \begin_inset Formula 
 \[
-M\geq N-\frac{6N^{2}+1}{12\cdot\log q}
+M\geq N-\frac{6N^{2}+1}{12\cdot\log\left(q\right)}
 \]
 
 \end_inset
 
-there is a guarantee that the probability of getting unique keys is above
- 
-\begin_inset Formula $q$
-\end_inset
 
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Summary
 \end_layout
 
 \begin_layout Standard
@@ -293,50 +245,7 @@ So, in order to have
 \begin_inset Formula $N$
 \end_inset
 
- different random numbers at probability 
-\begin_inset Formula $\ge q$
-\end_inset
-
-, you will need a
-\begin_inset Formula 
-\[
-\left\lceil \log_{2}\left(N-\frac{6\cdot N^{2}+1}{12\cdot\log q}\right)\right\rceil 
-\]
-
-\end_inset
-
-bit random number generator.
-\end_layout
-
-\begin_layout Standard
-Plotting the above equation for 
-\begin_inset Formula $q$
-\end_inset
-
-= 0.9.
- The plot of the above function is shown below, the 
-\begin_inset Formula $x$
-\end_inset
-
-axis is the number 
-\begin_inset Formula $n$
-\end_inset
-
- has 
-\begin_inset Formula $N=2^{n}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Graphics
-	filename plot.png
-	width 100line%
-
-\end_inset
-
-
+ different random numbers, you will need a
 \end_layout
 
 \end_body
