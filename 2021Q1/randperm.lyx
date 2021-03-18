@@ -4,8 +4,14 @@
 \begin_header
 \save_transient_properties true
 \origin unavailable
-\textclass article
+\textclass amsart
 \use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+tabs-within-sections
+\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -29,7 +35,17 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
-\use_hyperref false
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
 \use_geometry false
 \use_package amsmath 1
@@ -44,6 +60,7 @@
 \use_package undertilde 1
 \cite_engine basic
 \cite_engine_type default
+\biblio_style plain
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -75,48 +92,148 @@
 
 \begin_body
 
-\begin_layout Section
-The probability of unique keys
+\begin_layout Title
+On the correctness of implementing random permutation as sorting random
+ keys
 \end_layout
 
-\begin_layout Standard
-To sample 
+\begin_layout Author
+Xiang Gao
+\end_layout
+
+\begin_layout Abstract
+This documentation studies how many bits are required in random keys in
+ order to implement random permutation of 
 \begin_inset Formula $N$
 \end_inset
 
- numbers from a size 
+ numbers.
+ Fewer bits means faster radix sort but poorer randomness.
+ This documentation shows that, in order to generate a random permutaion
+ of 
+\begin_inset Formula $N$
+\end_inset
+
+ numbers with correctness probability 
+\begin_inset Formula $\ge q$
+\end_inset
+
+, the random numbers are required to have at least 
+\begin_inset Formula $\left\lceil \log_{2}\left(N-\frac{6N^{2}+1}{12\cdot\log q}\right)\right\rceil $
+\end_inset
+
+ bits.
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+A common way to implement random permutation of 
+\begin_inset Formula $N$
+\end_inset
+
+ numbers on GPU is by generating 
+\begin_inset Formula $N$
+\end_inset
+
+ random numbers as keys then sorting.
+ This implementation is correct only when these 
+\begin_inset Formula $N$
+\end_inset
+
+ random numbers are different, because stable sort algorithms will not permute
+ two identical keys, making 
+\begin_inset Formula $\left(0,1\right)$
+\end_inset
+
+ more preferred than 
+\begin_inset Formula $\left(1,0\right)$
+\end_inset
+
+.
+ If these random keys had infinite precision, then duplicate keys was not
+ a problem, because the probability of this case was 
+\begin_inset Formula $0$
+\end_inset
+
+.
+ However, for finite precision random numbers, this is not the case.
+\end_layout
+
+\begin_layout Standard
+Though facing correctness issue, for better performance, these 
+\begin_inset Formula $N$
+\end_inset
+
+ random numbers are usually generated independently and there is no effort
+ to guarantee they are different with each other.
+ We want to study the probability of getting duplicate keys.
+ From this probability, we can know how many bits are required in random
+ keys in order to get a good enough randomness.
+\end_layout
+
+\begin_layout Section
+The probability of getting non-duplicate keys
+\end_layout
+
+\begin_layout Standard
+An 
+\begin_inset Formula $m$
+\end_inset
+
+ bit random number has 
+\begin_inset Formula $M=2^{m}$
+\end_inset
+
+ different values.
+ Getting 
+\begin_inset Formula $N$
+\end_inset
+
+ independent random numbers from an 
+\begin_inset Formula $m$
+\end_inset
+
+ bit random generator is equivalent to drawing 
+\begin_inset Formula $N$
+\end_inset
+
+ samples from a size 
 \begin_inset Formula $M$
 \end_inset
 
- pool with replacement, there are in total 
+ pool with replacement, with uniform distribution, and order matters.
+ Therefore, there are in total 
 \begin_inset Formula $M^{N}$
 \end_inset
 
- cases.
- If the sampling is without replacement, there are 
+ different cases.
+ Within these cases, 
 \begin_inset Formula $P(M,N)$
 \end_inset
 
- cases, where 
+ of them don't have duplicate samples, where the 
 \begin_inset Formula $P\left(M,N\right)$
 \end_inset
 
-, also known as 
+ is often written as 
 \begin_inset Formula $n\mathrm{P}r$
 \end_inset
 
-, is defined as 
+, is defined by 
 \begin_inset Formula 
 \[
-P\left(M,N\right)=\frac{M!}{\left(M-N\right)!}.
+P\left(M,N\right)\coloneqq\frac{M!}{\left(M-N\right)!}.
 \]
 
 \end_inset
 
-So the probability of getting non-duplicating keys (the correct case) is
+So the probability of getting non-duplicating keys is
 \begin_inset Formula 
 \[
-\Pr\left[\text{unique keys}\right]=\frac{P\left(M,N\right)}{M^{N}}
+\Pr\left[\text{unique samples}\right]=\frac{P\left(M,N\right)}{M^{N}}
 \]
 
 \end_inset
@@ -126,12 +243,10 @@ So the probability of getting non-duplicating keys (the correct case) is
 
 \begin_layout Standard
 According to a narrowed version of Stirling's formula by Robbins
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-https://doi.org/10.2307/2308012
-\end_layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "10.2307/2308012"
+literal "false"
 
 \end_inset
 
@@ -163,7 +278,7 @@ so
 \begin_inset Formula 
 \begin{multline*}
 \frac{M^{(M-N)+\frac{1}{2}}\cdot e^{-N}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\leq\\
-\Pr\left[\text{unique keys}\right]\leq\frac{M^{(M-N)+\frac{1}{2}}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}e^{N}}\cdot e^{\frac{1}{12M}-\frac{1}{12\left(M-N\right)+1}}
+\Pr\left[\text{unique samples}\right]\leq\frac{M^{(M-N)+\frac{1}{2}}}{\left(M-N\right)^{\left(M-N\right)+\frac{1}{2}}e^{N}}\cdot e^{\frac{1}{12M}-\frac{1}{12\left(M-N\right)+1}}
 \end{multline*}
 
 \end_inset
@@ -172,15 +287,15 @@ which simplify to
 \begin_inset Formula 
 \begin{multline*}
 \left(\frac{M}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\leq\\
-\Pr\left[\text{unique keys}\right]\leq\left(\frac{M}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M}-\frac{1}{12\left(M-N\right)+1}}
+\Pr\left[\text{unique samples}\right]\leq\left(\frac{M}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M}-\frac{1}{12\left(M-N\right)+1}}
 \end{multline*}
 
 \end_inset
 
-we will later write the above inequality as
+Let's write the above inequality as
 \begin_inset Formula 
 \[
-f\left(M,N\right)\leq\Pr\left[\text{unique keys}\right]\leq g\left(M,N\right)
+f\left(M,N\right)\leq\Pr\left[\text{unique samples}\right]\leq g\left(M,N\right)
 \]
 
 \end_inset
@@ -193,22 +308,35 @@ Bound
 \end_layout
 
 \begin_layout Standard
-We want to guarantee that randperm algorithm's succeed probability above
- a certain threshold 
-\begin_inset Formula $\Pr\left[\text{unique keys}\right]\geq q$
+We want to make sure the probability of getting non-duplicate samples above
+ a certain threshold: 
+\begin_inset Formula 
+\begin{equation}
+\Pr\left[\text{unique samples}\right]\geq q\label{eq:prthres}
+\end{equation}
+
 \end_inset
 
-.
- We can achieve this by requiring 
+As long as 
 \begin_inset Formula $f\left(M,N\right)\geq q$
 \end_inset
 
-.
+, equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:prthres"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ will be automatically satisfied.
  Note that
 \begin_inset Formula 
 \begin{multline*}
-f\left(M,N\right)=\left(\frac{M}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\geq q\\
-=\left(1+\frac{N}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\geq q
+f\left(M,N\right)=\left(\frac{M}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}\\
+=\left(1+\frac{N}{M-N}\right)^{(M-N)+\frac{1}{2}}\cdot e^{-N}\cdot e^{\frac{1}{12M+1}-\frac{1}{12\left(M-N\right)}}
 \end{multline*}
 
 \end_inset
@@ -248,7 +376,8 @@ M-N+\frac{1}{2}\geq M-N
 we have
 \begin_inset Formula 
 \begin{multline*}
-\log f\left(M,N\right)\geq\left(M-N\right)\left[\frac{N}{M-N}-\frac{1}{2}\left(\frac{N}{M-N}\right)^{2}\right]-N-\frac{1}{12\left(M-N\right)}=-\frac{1}{12}\cdot\frac{6N^{2}+1}{M-N}
+\log f\left(M,N\right)\geq\left(M-N\right)\left[\frac{N}{M-N}-\frac{1}{2}\left(\frac{N}{M-N}\right)^{2}\right]-N-\frac{1}{12\left(M-N\right)}\\
+=-\frac{1}{12}\cdot\frac{6N^{2}+1}{M-N}
 \end{multline*}
 
 \end_inset
@@ -278,7 +407,7 @@ there is a guarantee that the probability of getting unique keys is above
 \end_layout
 
 \begin_layout Standard
-\begin_inset Newpage pagebreak
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -297,10 +426,10 @@ So, in order to have
 \begin_inset Formula $\ge q$
 \end_inset
 
-, you will need a
+, you will need an
 \begin_inset Formula 
 \[
-\left\lceil \log_{2}\left(N-\frac{6N^{2}+1}{12\cdot\log q}\right)\right\rceil 
+m=\left\lceil \log_{2}\left(N-\frac{6N^{2}+1}{12\cdot\log q}\right)\right\rceil 
 \]
 
 \end_inset
@@ -318,12 +447,16 @@ Plotting the above equation for
 \begin_inset Formula $x$
 \end_inset
 
-axis is the number 
-\begin_inset Formula $n$
+-axis is 
+\begin_inset Formula $\log_{2}N$
 \end_inset
 
- has 
-\begin_inset Formula $N=2^{n}$
+, the 
+\begin_inset Formula $y$
+\end_inset
+
+-axis is 
+\begin_inset Formula $m$
 \end_inset
 
 
@@ -333,6 +466,18 @@ axis is the number
 \begin_inset Graphics
 	filename plot.png
 	width 100line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "randperm"
+options "plain"
 
 \end_inset
 
