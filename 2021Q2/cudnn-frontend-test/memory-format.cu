@@ -77,6 +77,16 @@ void random_fill(Tensor &t) {
   }
 }
 
+class CuDNNError: public std::runtime_error {};
+
+#define CUDNN_CHECK(EXPR, ...)                                                                  \
+  do {                                                                                          \
+    cudnnStatus_t status = EXPR;                                                                \
+    if (status != CUDNN_STATUS_SUCCESS) {                                                       \
+        throw CuDNNError("cuDNN error");                                                        \
+    }                                                                                           \
+  } while (0)
+
 uint8_t getAlignment(const Tensor &t) {
   // alignment are in bytes
   uint8_t alignment = 1;
@@ -156,8 +166,8 @@ void convolution(Tensor input, Tensor weight, Tensor output,
                            .setDataPointers(3, data_ptrs)
                            .setUids(3, uids)
                            .build();
-    cudnnBackendExecute(handle, plan.get_raw_desc(),
-                        variantPack.get_raw_desc());
+    CUDNN_CHECK(cudnnBackendExecute(handle, plan.get_raw_desc(),
+                        variantPack.get_raw_desc()));
   };
 
   auto op = cudnn_frontend::OperationBuilder(
@@ -206,4 +216,6 @@ void convolution(Tensor input, Tensor weight, Tensor output,
   }
 }
 
-int main() {}
+int main() {
+    Tensor t = new_tensor({});
+}
