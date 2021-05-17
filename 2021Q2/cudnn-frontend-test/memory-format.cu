@@ -2,6 +2,7 @@
 #include <cudnn_frontend.h>
 #include <random>
 #include <vector>
+#include <iostream>
 
 constexpr int64_t DIMS = 4;
 
@@ -15,6 +16,12 @@ struct Tensor {
     return data[index];
   }
 };
+
+std::ostream &operator<<(std::ostream &out, const Tensor &t) {
+    return (out << "Tensor(shape=[" << t.shape[0] << "," << t.shape[1] << "," << t.shape[2] << "," << t.shape[3] \
+        << "], stride=[" << t.strides[0] << "," << t.strides[1] << "," << t.strides[2] << "," << t.strides[3] \
+        << "])");
+}
 
 Tensor new_tensor(const std::vector<int64_t> &shape,
                   const std::vector<int64_t> &dim_order) {
@@ -221,10 +228,11 @@ void convolution(Tensor input, Tensor weight, Tensor output,
 
 int main() {
   Tensor input = new_tensor({2, 8, 4, 4}, {3, 2, 1, 0});
-  random_fill(input);
-  Tensor weight = new_tensor({4, 8, 3}, {3, 2, 1, 0});
-  random_fill(weight);
+  random_fill(input); std::cout << input << std::endl;
+  Tensor weight = new_tensor({4, 8, 3, 3}, {3, 2, 1, 0});
+  random_fill(weight); std::cout << weight << std::endl;
   Tensor output = new_tensor({2, 4, 2, 2}, {3, 2, 1, 0});
+  std::cout << output << std::endl;
   std::vector<int64_t> padding = {0, 0};
   std::vector<int64_t> stride = {1, 1};
   std::vector<int64_t> dilation = {1, 1};
