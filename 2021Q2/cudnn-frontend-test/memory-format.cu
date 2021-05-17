@@ -253,6 +253,7 @@ void convolution(Tensor<T1> input, Tensor<T2> weight, Tensor<T3> output,
 }
 
 int main() {
+  // float nchw
   auto input = new_tensor<float>({2, 8, 4, 4}, {3, 2, 1, 0});
   random_fill(input);
   auto weight = new_tensor<float>({4, 8, 3, 3}, {3, 2, 1, 0});
@@ -263,6 +264,7 @@ int main() {
   std::vector<int64_t> dilation = {1, 1};
   convolution(input, weight, output, padding, stride, dilation, false, true);
 
+  // double nchw
   auto input2 = new_tensor<double>({2, 8, 4, 4}, {3, 2, 1, 0});
   copy(input2, input);
   auto weight2 = new_tensor<double>({4, 8, 3, 3}, {3, 2, 1, 0});
@@ -270,5 +272,12 @@ int main() {
   auto output2 = new_tensor<double>({2, 4, 2, 2}, {3, 2, 1, 0});
   convolution(input2, weight2, output2, padding, stride, dilation, false, true);
 
-  std::cout << "diff = " << maxdiff(output, output2) << std::endl;
+  std::cout << "diff(output, output2) = " << maxdiff(output, output2)
+            << std::endl;
+
+  // run float nchw again
+  auto output3 = new_tensor<float>({2, 4, 2, 2}, {3, 2, 1, 0});
+  convolution(input, weight, output3, padding, stride, dilation, false, true);
+  std::cout << "diff(output, output3) = " << maxdiff(output, output3)
+            << std::endl;
 }
