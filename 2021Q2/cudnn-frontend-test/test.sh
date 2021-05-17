@@ -1,0 +1,1 @@
+nvcc -run memory-format.cu -Icudnn-frontend/include

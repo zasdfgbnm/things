@@ -6,3 +6,4 @@ __pycache__
 *.gz
 *.qdrep
 *.sqlite
+a.out
