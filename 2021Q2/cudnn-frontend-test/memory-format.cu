@@ -72,7 +72,7 @@ float maxdiff(Tensor &to, Tensor &from) {
 
 void random_fill(Tensor &t) {
   std::default_random_engine generator;
-  std::uniform_real_distribution<float> distribution(0.0, 1.0);
+  std::uniform_int_distribution<int> distribution(-3, 3);
   for (int i = 0; i < t.shape[0]; i++) {
     for (int j = 0; j < t.shape[1]; j++) {
       for (int k = 0; k < t.shape[2]; k++) {
