@@ -132,9 +132,10 @@ void filterEngineConfigs(cudnn_frontend::EngineConfigList &from,
   cudnn_frontend::filter(from, to, filter);
 }
 
-void convolution(Tensor input, Tensor weight, Tensor output, std::vector<int64_t> padding,
-                 std::vector<int64_t> stride, std::vector<int64_t> dilation,
-                 bool deterministic, bool allow_tf32) {
+void convolution(Tensor input, Tensor weight, Tensor output,
+                 std::vector<int64_t> padding, std::vector<int64_t> stride,
+                 std::vector<int64_t> dilation, bool deterministic,
+                 bool allow_tf32) {
   cudnnHandle_t handle;
   cudnnCreate(&handle);
 
@@ -147,8 +148,7 @@ void convolution(Tensor input, Tensor weight, Tensor output, std::vector<int64_t
     auto workspace_size = plan.getWorkspaceSize();
     void *workspace;
     cudaMalloc(&workspace, workspace_size);
-    void *data_ptrs[] = {input.data, output.data,
-                         weight.data};
+    void *data_ptrs[] = {input.data, output.data, weight.data};
 
     int64_t uids[] = {'x', 'y', 'w'};
     auto variantPack = cudnn_frontend::VariantPackBuilder()
@@ -156,7 +156,8 @@ void convolution(Tensor input, Tensor weight, Tensor output, std::vector<int64_t
                            .setDataPointers(3, data_ptrs)
                            .setUids(3, uids)
                            .build();
-    cudnnBackendExecute(handle, plan.get_raw_desc(), variantPack.get_raw_desc());
+    cudnnBackendExecute(handle, plan.get_raw_desc(),
+                        variantPack.get_raw_desc());
   };
 
   auto op = cudnn_frontend::OperationBuilder(
@@ -164,8 +165,7 @@ void convolution(Tensor input, Tensor weight, Tensor output, std::vector<int64_t
                 .setxDesc(getTensorDescriptor(input, 'x'))
                 .setyDesc(getTensorDescriptor(output, 'y'))
                 .setwDesc(getTensorDescriptor(weight, 'w'))
-                .setcDesc(getConvDescriptor(padding,
-                                            stride, dilation))
+                .setcDesc(getConvDescriptor(padding, stride, dilation))
                 .build();
   // std::cout << op.describe() << std::endl;
 
