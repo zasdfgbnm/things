@@ -77,14 +77,16 @@ void random_fill(Tensor &t) {
   }
 }
 
-class CuDNNError: public std::runtime_error {};
+class CuDNNError : public std::runtime_error {
+    using runtime_error::runtime_error;
+};
 
-#define CUDNN_CHECK(EXPR, ...)                                                                  \
-  do {                                                                                          \
-    cudnnStatus_t status = EXPR;                                                                \
-    if (status != CUDNN_STATUS_SUCCESS) {                                                       \
-        throw CuDNNError("cuDNN error");                                                        \
-    }                                                                                           \
+#define CUDNN_CHECK(EXPR, ...)                                                 \
+  do {                                                                         \
+    cudnnStatus_t status = EXPR;                                               \
+    if (status != CUDNN_STATUS_SUCCESS) {                                      \
+      throw CuDNNError("cuDNN error");                                         \
+    }                                                                          \
   } while (0)
 
 uint8_t getAlignment(const Tensor &t) {
@@ -167,7 +169,7 @@ void convolution(Tensor input, Tensor weight, Tensor output,
                            .setUids(3, uids)
                            .build();
     CUDNN_CHECK(cudnnBackendExecute(handle, plan.get_raw_desc(),
-                        variantPack.get_raw_desc()));
+                                    variantPack.get_raw_desc()));
   };
 
   auto op = cudnn_frontend::OperationBuilder(
@@ -212,10 +214,20 @@ void convolution(Tensor input, Tensor weight, Tensor output,
       run(cfg);
       return;
     } catch (cudnn_frontend::cudnnException &e) {
+    } catch (CuDNNError &e) {
     }
   }
 }
 
 int main() {
-    Tensor t = new_tensor({});
+  Tensor input = new_tensor({2, 8, 4, 4}, {3, 2, 1, 0});
+  random_fill(input);
+  Tensor weight = new_tensor({4, 8, 3}, {3, 2, 1, 0});
+  random_fill(weight);
+  Tensor output = new_tensor({2, 4, 2, 2}, {3, 2, 1, 0});
+  std::vector<int64_t> padding = {0, 0};
+  std::vector<int64_t> stride = {1, 1};
+  std::vector<int64_t> dilation = {1, 1};
+
+  convolution(input, weight, output, padding, stride, dilation, false, true);
 }

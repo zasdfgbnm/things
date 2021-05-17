@@ -30,6 +30,13 @@ def helper(n, c, h, w, out_channels, kernel_size, groups):
     out = conv(input)
     ref_out = ref_conv(ref_input)
 
+    print("input.shape =", input.shape)
+    print("out.shape =", out.shape)
+    print("conv.weight.shape =", conv.weight.shape)
+    print("conv.padding =", conv.padding)
+    print("conv.stride =", conv.stride)
+    print("conv.dilation =", conv.dilation)
+
     grad = torch.randint_like(out, -3, 3)
     ref_grad = grad.detach().clone().double().contiguous()
 
