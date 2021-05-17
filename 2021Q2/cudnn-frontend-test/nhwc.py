@@ -2,6 +2,7 @@ import torch
 from torch import nn
 
 dtype = torch.float
+ref_dtype = torch.double
 device = 'cuda'
 
 def assertTrue(x):
@@ -21,11 +22,11 @@ def helper(n, c, h, w, out_channels, kernel_size, groups):
         p.data = torch.randint_like(p, -3, 3)
 
     # use FP64 channels-first conv as reference
-    ref_input = input.detach().clone().contiguous().double().requires_grad_()
+    ref_input = input.detach().clone().contiguous().to(ref_dtype).requires_grad_()
     ref_conv = nn.Conv2d(c, out_channels, kernel_size, groups=groups)
     # load_state_dict will restore the stride & memory_layout on ref_conv.weight.
     ref_conv.load_state_dict(conv.state_dict())
-    ref_conv = ref_conv.to(device='cuda', dtype=torch.double, memory_format=torch.contiguous_format)
+    ref_conv = ref_conv.to(device='cuda', dtype=ref_dtype, memory_format=torch.contiguous_format)
 
     out = conv(input)
     ref_out = ref_conv(ref_input)
