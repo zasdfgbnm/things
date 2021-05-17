@@ -274,10 +274,4 @@ int main() {
 
   std::cout << "diff(output, output2) = " << maxdiff(output, output2)
             << std::endl;
-
-  // run float nchw again
-  auto output3 = new_tensor<float>({2, 4, 2, 2}, {3, 2, 1, 0});
-  convolution(input, weight, output3, padding, stride, dilation, false, true);
-  std::cout << "diff(output, output3) = " << maxdiff(output, output3)
-            << std::endl;
 }
