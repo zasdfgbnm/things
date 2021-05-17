@@ -236,6 +236,15 @@ int main() {
   std::vector<int64_t> padding = {0, 0};
   std::vector<int64_t> stride = {1, 1};
   std::vector<int64_t> dilation = {1, 1};
-
   convolution(input, weight, output, padding, stride, dilation, false, true);
+
+  Tensor input2 = new_tensor({2, 8, 4, 4}, {1, 3, 2, 0});
+  copy(input2, input); std::cout << input << std::endl;
+  Tensor weight2 = new_tensor({4, 8, 3, 3}, {1, 3, 2, 0});
+  copy(weight2, weight); std::cout << weight << std::endl;
+  Tensor output2 = new_tensor({2, 4, 2, 2}, {1, 3, 2, 0});
+  std::cout << output << std::endl;
+  convolution(input2, weight2, output2, padding, stride, dilation, false, true);
+
+  std::cout << "diff = " << maxdiff(output, output2) << std::endl;
 }
