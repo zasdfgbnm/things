@@ -37,24 +37,7 @@ def helper(n, c, h, w, out_channels, kernel_size, groups):
     print("conv.stride =", conv.stride)
     print("conv.dilation =", conv.dilation)
 
-    grad = torch.randint_like(out, -3, 3)
-    ref_grad = grad.detach().clone().double().contiguous()
-
-    out.backward(grad)
-    ref_out.backward(ref_grad)
-
-    assertTrue(out.is_contiguous(memory_format=torch.channels_last))
-    assertTrue(input.grad.is_contiguous(memory_format=torch.channels_last))
-    assertTrue(conv.weight.grad.is_contiguous(memory_format=torch.channels_last))
-
-    assertTrue(ref_out.is_contiguous())
-    assertTrue(ref_input.grad.is_contiguous())
-    assertTrue(ref_conv.weight.grad.is_contiguous())
-
     assertEqual(out, ref_out, exact_dtype=False)
-    assertEqual(conv.weight.grad, ref_conv.weight.grad, exact_dtype=False)
-    assertEqual(conv.bias.grad, ref_conv.bias.grad, exact_dtype=False)
-    assertEqual(input.grad, ref_input.grad, exact_dtype=False)
 
 helper(2, 8, 4, 4, out_channels=4, kernel_size=3, groups=1)
 helper(2, 8, 4, 4, out_channels=8, kernel_size=3, groups=8)
