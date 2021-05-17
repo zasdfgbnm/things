@@ -1,15 +1,14 @@
 #include <cassert>
+#include <cuda_bf16.h>
+#include <cuda_fp16.h>
 #include <cudnn_frontend.h>
+#include <iostream>
 #include <random>
 #include <vector>
-#include <iostream>
-#include <cuda_fp16.h>
-#include <cuda_bf16.h>
 
 constexpr int64_t DIMS = 4;
 
-template<typename T>
-struct Tensor {
+template <typename T> struct Tensor {
   using dtype = T;
   int64_t shape[DIMS];
   int64_t strides[DIMS];
@@ -21,30 +20,31 @@ struct Tensor {
   }
 };
 
-template<typename T>
+template <typename T>
 std::ostream &operator<<(std::ostream &out, const Tensor<T> &t) {
-    return (out << "Tensor(shape=[" << t.shape[0] << "," << t.shape[1] << "," << t.shape[2] << "," << t.shape[3] \
-        << "], stride=[" << t.strides[0] << "," << t.strides[1] << "," << t.strides[2] << "," << t.strides[3] \
-        << "])");
+  return (out << "Tensor(shape=[" << t.shape[0] << "," << t.shape[1] << ","
+              << t.shape[2] << "," << t.shape[3] << "], stride=["
+              << t.strides[0] << "," << t.strides[1] << "," << t.strides[2]
+              << "," << t.strides[3] << "])");
 }
 
-template<typename T>
-inline cudnnDataType_t getDataType() {
-    if (std::is_same<T, float>::value) {
-      return CUDNN_DATA_FLOAT;
-    } else if (std::is_same<T, __half>::value) {
-      return CUDNN_DATA_HALF;
-    } else if (std::is_same<T, double>::value) {
-      return CUDNN_DATA_DOUBLE;
-    } else if (std::is_same<T, __nv_bfloat16>::value) {
+template <typename T> inline cudnnDataType_t getDataType() {
+  if (std::is_same<T, float>::value) {
+    return CUDNN_DATA_FLOAT;
+  } else if (std::is_same<T, __half>::value) {
+    return CUDNN_DATA_HALF;
+  } else if (std::is_same<T, double>::value) {
+    return CUDNN_DATA_DOUBLE;
+  } else if (std::is_same<T, __nv_bfloat16>::value) {
     return CUDNN_DATA_BFLOAT16;
-    }
-    throw std::runtime_error("TensorDescriptor only supports double, float and half tensors");
   }
+  throw std::runtime_error(
+      "TensorDescriptor only supports double, float and half tensors");
+}
 
-template<typename T>
+template <typename T>
 Tensor<T> new_tensor(const std::vector<int64_t> &shape,
-                  const std::vector<int64_t> &dim_order) {
+                     const std::vector<int64_t> &dim_order) {
   Tensor<T> ret;
 
   for (int i = 0; i < DIMS; i++) {
@@ -61,7 +61,7 @@ Tensor<T> new_tensor(const std::vector<int64_t> &shape,
   return ret;
 }
 
-template<typename T1, typename T2>
+template <typename T1, typename T2>
 void copy(Tensor<T1> &to, Tensor<T2> &from) {
   for (int i = 0; i < from.shape[0]; i++) {
     for (int j = 0; j < from.shape[1]; j++) {
@@ -74,7 +74,7 @@ void copy(Tensor<T1> &to, Tensor<T2> &from) {
   }
 }
 
-template<typename T1, typename T2>
+template <typename T1, typename T2>
 double maxdiff(Tensor<T1> &to, Tensor<T2> &from) {
   double result = -1;
   for (int i = 0; i < from.shape[0]; i++) {
@@ -92,8 +92,7 @@ double maxdiff(Tensor<T1> &to, Tensor<T2> &from) {
   return result;
 }
 
-template<typename T>
-void random_fill(Tensor<T> &t) {
+template <typename T> void random_fill(Tensor<T> &t) {
   std::default_random_engine generator;
   std::uniform_int_distribution<int> distribution(-3, 3);
   for (int i = 0; i < t.shape[0]; i++) {
@@ -108,7 +107,7 @@ void random_fill(Tensor<T> &t) {
 }
 
 class CuDNNError : public std::runtime_error {
-    using runtime_error::runtime_error;
+  using runtime_error::runtime_error;
 };
 
 #define CUDNN_CHECK(EXPR, ...)                                                 \
@@ -119,8 +118,7 @@ class CuDNNError : public std::runtime_error {
     }                                                                          \
   } while (0)
 
-template<typename T>
-uint8_t getAlignment(const Tensor<T> &t) {
+template <typename T> uint8_t getAlignment(const Tensor<T> &t) {
   // alignment are in bytes
   uint8_t alignment = 1;
   uint64_t address = reinterpret_cast<uint64_t>(t.data);
@@ -129,7 +127,7 @@ uint8_t getAlignment(const Tensor<T> &t) {
   return alignment;
 }
 
-template<typename T>
+template <typename T>
 cudnn_frontend::Tensor getTensorDescriptor(const Tensor<T> &t, int64_t id) {
   return cudnn_frontend::TensorBuilder()
       .setDim(DIMS, t.shape)
@@ -141,7 +139,7 @@ cudnn_frontend::Tensor getTensorDescriptor(const Tensor<T> &t, int64_t id) {
 }
 
 cudnn_frontend::ConvDesc_v8 getConvDescriptor(cudnnDataType_t dtype,
-    std::vector<int64_t> padding,
+                                              std::vector<int64_t> padding,
                                               std::vector<int64_t> stride,
                                               std::vector<int64_t> dilation) {
   uint64_t convDim = stride.size();
@@ -177,7 +175,7 @@ void filterEngineConfigs(cudnn_frontend::EngineConfigList &from,
   cudnn_frontend::filter(from, to, filter);
 }
 
-template<typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3>
 void convolution(Tensor<T1> input, Tensor<T2> weight, Tensor<T3> output,
                  std::vector<int64_t> padding, std::vector<int64_t> stride,
                  std::vector<int64_t> dilation, bool deterministic,
@@ -211,7 +209,8 @@ void convolution(Tensor<T1> input, Tensor<T2> weight, Tensor<T3> output,
                 .setxDesc(getTensorDescriptor(input, 'x'))
                 .setyDesc(getTensorDescriptor(output, 'y'))
                 .setwDesc(getTensorDescriptor(weight, 'w'))
-                .setcDesc(getConvDescriptor(getDataType<T3>(), padding, stride, dilation))
+                .setcDesc(getConvDescriptor(getDataType<T3>(), padding, stride,
+                                            dilation))
                 .build();
   // std::cout << op.describe() << std::endl;
 
@@ -255,22 +254,20 @@ void convolution(Tensor<T1> input, Tensor<T2> weight, Tensor<T3> output,
 
 int main() {
   auto input = new_tensor<float>({2, 8, 4, 4}, {3, 2, 1, 0});
-  random_fill(input); std::cout << input << std::endl;
+  random_fill(input);
   auto weight = new_tensor<float>({4, 8, 3, 3}, {3, 2, 1, 0});
-  random_fill(weight); std::cout << weight << std::endl;
+  random_fill(weight);
   auto output = new_tensor<float>({2, 4, 2, 2}, {3, 2, 1, 0});
-  std::cout << output << std::endl;
   std::vector<int64_t> padding = {0, 0};
   std::vector<int64_t> stride = {1, 1};
   std::vector<int64_t> dilation = {1, 1};
   convolution(input, weight, output, padding, stride, dilation, false, true);
 
-  auto input2 = new_tensor<float>({2, 8, 4, 4}, {1, 3, 2, 0});
-  copy(input2, input); std::cout << input << std::endl;
-  auto weight2 = new_tensor<float>({4, 8, 3, 3}, {1, 3, 2, 0});
-  copy(weight2, weight); std::cout << weight << std::endl;
-  auto output2 = new_tensor<float>({2, 4, 2, 2}, {1, 3, 2, 0});
-  std::cout << output << std::endl;
+  auto input2 = new_tensor<double>({2, 8, 4, 4}, {3, 2, 1, 0});
+  copy(input2, input);
+  auto weight2 = new_tensor<double>({4, 8, 3, 3}, {3, 2, 1, 0});
+  copy(weight2, weight);
+  auto output2 = new_tensor<double>({2, 4, 2, 2}, {3, 2, 1, 0});
   convolution(input2, weight2, output2, padding, stride, dilation, false, true);
 
   std::cout << "diff = " << maxdiff(output, output2) << std::endl;
