@@ -42,4 +42,21 @@ void copy(Tensor &to, Tensor &from) {
     }
 }
 
+float maxdiff(Tensor &to, Tensor &from) {
+    float result = -1;
+    for (int i = 0; i < from.shape[0]; i++) {
+        for (int j = 0; j < from.shape[1]; j++) {
+            for (int k = 0; k < from.shape[2]; k++) {
+                for (int l = 0; l < from.shape[3]; l++) {
+                    float diff = std::abs(to(i, j, k, l) - from(i, j, k, l));
+                    if (diff > result) {
+                        result = diff;
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}
+
 int main() {}
