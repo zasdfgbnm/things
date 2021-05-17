@@ -1,5 +1,6 @@
 #include <vector>
 #include <cassert>
+#include <random>
 
 constexpr int64_t DIMS = 4;
 
@@ -57,6 +58,20 @@ float maxdiff(Tensor &to, Tensor &from) {
         }
     }
     return result;
+}
+
+void random_fill(Tensor &t) {
+    std::default_random_engine generator;
+    std::uniform_real_distribution<float> distribution(0.0,1.0);
+    for (int i = 0; i < from.shape[0]; i++) {
+        for (int j = 0; j < from.shape[1]; j++) {
+            for (int k = 0; k < from.shape[2]; k++) {
+                for (int l = 0; l < from.shape[3]; l++) {
+                    t(i, j, k, l) = distribution(generator);
+                }
+            }
+        }
+    }
 }
 
 int main() {}
