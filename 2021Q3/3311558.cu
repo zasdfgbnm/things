@@ -18,14 +18,56 @@ template <typename T> struct Tensor {
         i * strides[0] + j * strides[1] + k * strides[2] + l * strides[3];
     return data[index];
   }
+  const T &operator()(int64_t i, int64_t j, int64_t k, int64_t l) const {
+    int64_t index =
+        i * strides[0] + j * strides[1] + k * strides[2] + l * strides[3];
+    return data[index];
+  }
 };
 
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const Tensor<T> &t) {
-  return (out << "Tensor(shape=[" << t.shape[0] << "," << t.shape[1] << ","
-              << t.shape[2] << "," << t.shape[3] << "], stride=["
-              << t.strides[0] << "," << t.strides[1] << "," << t.strides[2]
-              << "," << t.strides[3] << "])");
+  out << "Tensor(shape=[" << t.shape[0] << "," << t.shape[1] << ","
+      << t.shape[2] << "," << t.shape[3] << "], stride=[" << t.strides[0] << ","
+      << t.strides[1] << "," << t.strides[2] << "," << t.strides[3]
+      << "], data = [\n";
+  bool firsti = true;
+  for (int64_t i = 0; i < t.shape[0]; i++) {
+    if (!firsti) {
+      out << ",\n";
+    }
+    out << " [";
+    bool firstj = true;
+    for (int64_t j = 0; j < t.shape[1]; j++) {
+      if (!firstj) {
+        out << ",\n  ";
+      }
+      out << "[";
+      bool firstk = true;
+      for (int64_t k = 0; k < t.shape[2]; k++) {
+        if (!firstk) {
+          out << ", ";
+        }
+        out << "[";
+        bool firstl = true;
+        for (int64_t l = 0; l < t.shape[3]; l++) {
+          if (!firstl) {
+            out << ", ";
+          }
+          out << t(i, j, k, l);
+          firstl = false;
+        }
+        out << "]";
+        firstk = false;
+      }
+      out << "]";
+      firstj = false;
+    }
+    out << "]";
+    firsti = false;
+  }
+  out << "]);";
+  return out;
 }
 
 template <typename T> inline cudnnDataType_t getDataType() {
@@ -253,15 +295,17 @@ void convolution(Tensor<T1> input, Tensor<T2> weight, Tensor<T3> output,
 }
 
 int main() {
-  // float nchw
-  auto input = new_tensor<float>({2, 8, 4, 4}, {3, 2, 1, 0});
-  random_fill(input);
-  auto weight = new_tensor<float>({4, 8, 3, 3}, {3, 2, 1, 0});
-  random_fill(weight);
-  auto output = new_tensor<float>({2, 4, 2, 2}, {3, 2, 1, 0});
   std::vector<int64_t> padding = {0, 0};
   std::vector<int64_t> stride = {1, 1};
   std::vector<int64_t> dilation = {1, 1};
+
+  // float nchw
+  auto input = new_tensor<float>({2, 8, 4, 4}, {3, 2, 1, 0});
+  random_fill(input);
+  // std::cout << "input = " << input << std::endl;
+  auto weight = new_tensor<float>({4, 8, 3, 3}, {3, 2, 1, 0});
+  random_fill(weight);
+  auto output = new_tensor<float>({2, 4, 2, 2}, {3, 2, 1, 0});
   convolution(input, weight, output, padding, stride, dilation, false, true);
 
   // double nchw
