@@ -18,14 +18,14 @@ os.environ["NCCL_DEBUG"] = "INFO"
 # First PG
 print("Initializing First PG")
 os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net1"
-dist.init_process_group('gloo', init_method="file:///tmp/tmpfile1",
+dist.init_process_group('nccl', init_method="file:///tmp/tmpfile1",
                         rank=rank, world_size=world_size)
 print("First PG Initialized")
 
 # Second PG
 print("Initializing Second PG")
 os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net2"
-pg = dist.new_group(backend="gloo")
+pg = dist.new_group(backend="nccl")
 print("Second PG Initialized")
 
 # Data
