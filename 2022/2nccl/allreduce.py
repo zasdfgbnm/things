@@ -22,7 +22,7 @@ dist.init_process_group('nccl', init_method="file:///tmp/tmpfile1",
 
 # Second PG
 os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net2"
-pg = dist.new_group("nccl")
+pg = dist.new_group(backend="nccl")
 
 # Data
 send1 = torch.empty(1000, device=f"cuda:{rank}").fill_(rank + 1)
@@ -34,7 +34,7 @@ recv2 = torch.empty(1000000, device=f"cuda:{rank}")
 torch.cuda.synchronize()
 dist.all_reduce(recv1, send1)
 torch.cuda.synchronize()
-dist.all_reduce(recv2, send2)
+dist.all_reduce(recv2, send2, group=pg)
 torch.cuda.synchronize()
 
 print("recv1[:10]", recv1[:10])

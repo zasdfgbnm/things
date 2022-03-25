@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python allreduce.py test2 0
+python allreduce.py test2 1
