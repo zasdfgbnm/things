@@ -84,3 +84,6 @@ $ ip netns exec test2 ping 192.168.102.1
 PING 192.168.102.1 (192.168.102.1) 56(84) bytes of data.
 64 bytes from 192.168.102.1: icmp_seq=1 ttl=64 time=0.044 ms
 ```
+
+# Step 2: run testing scripts
+
