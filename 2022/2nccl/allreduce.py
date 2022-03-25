@@ -16,26 +16,32 @@ os.environ["NCCL_SHM_DISABLE"] = "1"
 os.environ["NCCL_DEBUG"] = "INFO"
 
 # First PG
+print("Initializing First PG")
 os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net1"
-dist.init_process_group('nccl', init_method="file:///tmp/tmpfile1",
+dist.init_process_group('gloo', init_method="file:///tmp/tmpfile1",
                         rank=rank, world_size=world_size)
+print("First PG Initialized")
 
 # Second PG
+print("Initializing Second PG")
 os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net2"
-pg = dist.new_group(backend="nccl")
+pg = dist.new_group(backend="gloo")
+print("Second PG Initialized")
 
 # Data
-send1 = torch.empty(1000, device=f"cuda:{rank}").fill_(rank + 1)
-send2 = torch.empty(1000000, device=f"cuda:{rank}").fill_(rank + 1)
-recv1 = torch.empty(1000, device=f"cuda:{rank}")
-recv2 = torch.empty(1000000, device=f"cuda:{rank}")
+t1 = torch.empty(1000, device=f"cuda:{rank}").fill_(rank + 1)
+t2 = torch.empty(1000000, device=f"cuda:{rank}").fill_(rank + 1)
 
 # Run
 torch.cuda.synchronize()
-dist.all_reduce(recv1, send1)
+print("all reduce 1")
+work = dist.all_reduce(t1)
+# work.wait()
 torch.cuda.synchronize()
-dist.all_reduce(recv2, send2, group=pg)
-torch.cuda.synchronize()
+print("recv1[:10]", t1[:10])
 
-print("recv1[:10]", recv1[:10])
-print("recv2[:10]", recv2[:10])
+print("all reduce 2")
+work = dist.all_reduce(t2, group=pg)
+# work.wait()
+torch.cuda.synchronize()
+print("recv2[:10]", t2[:10])
