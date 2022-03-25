@@ -11,20 +11,22 @@ args = parser.parse_args()
 rank = args.rank
 world_size = 2
 
-os.environ["NCCL_P2P_DISABLE"] = "1"
-os.environ["NCCL_SHM_DISABLE"] = "1"
+# os.environ["NCCL_P2P_DISABLE"] = "1"
+# os.environ["NCCL_SHM_DISABLE"] = "1"
 os.environ["NCCL_DEBUG"] = "INFO"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 # First PG
 print("Initializing First PG")
-os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net1"
-dist.init_process_group('nccl', init_method="file:///tmp/tmpfile1",
-                        rank=rank, world_size=world_size)
+# os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net1"
+os.environ["NCCL_IB_DISABLE"] = "0"
+dist.init_process_group('nccl', rank=rank, world_size=world_size)
 print("First PG Initialized")
 
 # Second PG
 print("Initializing Second PG")
-os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net2"
+# os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net2"
+os.environ["NCCL_IB_DISABLE"] = "1"
 pg = dist.new_group(backend="nccl")
 print("Second PG Initialized")
 
