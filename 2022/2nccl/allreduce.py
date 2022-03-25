@@ -25,8 +25,8 @@ os.environ["NCCL_SOCKET_IFNAME"] = f"{args.namespace}net2"
 pg = dist.new_group("nccl")
 
 # Data
-send1 = torch.empty(1000, device=f"cuda:{rank}").fill_(rank)
-send2 = torch.empty(1000000, device=f"cuda:{rank}").fill_(rank)
+send1 = torch.empty(1000, device=f"cuda:{rank}").fill_(rank + 1)
+send2 = torch.empty(1000000, device=f"cuda:{rank}").fill_(rank + 1)
 recv1 = torch.empty(1000, device=f"cuda:{rank}")
 recv2 = torch.empty(1000000, device=f"cuda:{rank}")
 
