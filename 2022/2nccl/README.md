@@ -85,5 +85,16 @@ PING 192.168.102.1 (192.168.102.1) 56(84) bytes of data.
 64 bytes from 192.168.102.1: icmp_seq=1 ttl=64 time=0.044 ms
 ```
 
-# Step 2: run testing scripts
+# Step 2: Run testing scripts
 
+In one command window:
+
+```bash
+ip netns exec test1 sudo -u gaoxiang $PWD/start1.sh
+```
+
+In another command window:
+
+```bash
+ip netns exec test2 sudo -u gaoxiang $PWD/start2.sh
+```
