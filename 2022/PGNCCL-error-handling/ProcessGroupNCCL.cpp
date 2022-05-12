@@ -1,8 +1,5 @@
 #include <c10d/ProcessGroupNCCL.hpp>
-#include <c10d/UCCForNCCL.hpp>
 #include <sstream>
-
-#ifdef USE_C10D_NCCL
 
 #include <exception>
 #include <map>
@@ -30,104 +27,6 @@ namespace c10d {
 constexpr const char* const kNCCLAbortedCommStoreKey = "NCCLABORTEDCOMM";
 
 namespace {
-
-// RAII helper class to manage NCCL group API and CUDA free mutex.
-// The destructor is allowed to throw since this helper class only
-// manages group and lock lifetimes.
-struct AutoNcclGroup {
-  AutoNcclGroup() {
-    (c10::cuda::CUDACachingAllocator::getFreeMutex())->lock();
-#if defined(NCCL_MAJOR) && (NCCL_MAJOR >= 2)
-    C10D_NCCL_CHECK(ncclGroupStart(), c10::nullopt);
-#endif
-  }
-  ~AutoNcclGroup() noexcept(false) {
-#if defined(NCCL_MAJOR) && (NCCL_MAJOR >= 2)
-    C10D_NCCL_CHECK(ncclGroupEnd(), c10::nullopt);
-#endif
-    (c10::cuda::CUDACachingAllocator::getFreeMutex())->unlock();
-  }
-};
-
-#if defined(NCCL_MAJOR) && ((NCCL_MAJOR > 2) || \
-                            (NCCL_MAJOR == 2) && (NCCL_MINOR >= 10))
-#define NCCL_HAS_AVG 1
-#endif
-
-// NCCL op mapping
-const std::map<ReduceOp, ncclRedOp_t> ncclOp = {
-    {ReduceOp::MIN, ncclMin},
-    {ReduceOp::MAX, ncclMax},
-    {ReduceOp::SUM, ncclSum},
-    {ReduceOp::PRODUCT, ncclProd},
-#ifdef NCCL_HAS_AVG
-    {ReduceOp::AVG, ncclAvg},
-#endif
-};
-
-// NCCL type typing
-std::map<at::ScalarType, ncclDataType_t> ncclDataType = {
-    {at::kChar, ncclInt8},
-    {at::kByte, ncclUint8},
-    {at::kFloat, ncclFloat},
-    {at::kDouble, ncclDouble},
-    {at::kInt, ncclInt32},
-    {at::kLong, ncclInt64},
-    {at::kHalf, ncclHalf},
-    {at::kBool, ncclUint8},
-#if HAS_NCCL_BF16_DATATYPE
-    {at::kBFloat16, ncclBfloat16},
-#endif
-};
-
-// Helper function that gets the data type and issues error if not supported
-ncclDataType_t getNcclDataType(at::ScalarType type) {
-  auto it = ncclDataType.find(type);
-  TORCH_CHECK(
-      it != ncclDataType.end(),
-      "Input tensor data type is not supported for NCCL process group: ",
-      type);
-  return it->second;
-}
-
-ncclRedOp_t getNcclReduceOp(const ReduceOp reduceOp, at::Tensor& input) {
-  try {
-    if (input.scalar_type() == at::kBool) {
-      if (reduceOp == ReduceOp::SUM) {
-        // For bool tensors, map sum to max, which both represent a bitwise or.
-        // This is to prevent overflow issues with sum, since we use uint8 to
-        // represent a bool (see ncclDataType mapping).
-        return ncclMax;
-      }
-#ifdef NCCL_HAS_AVG
-      if (reduceOp == ReduceOp::AVG) {
-        TORCH_CHECK(false, "Cannot use ReduceOp.AVG with boolean inputs");
-      }
-#endif
-    }
-    return ncclOp.at(reduceOp);
-  } catch (const std::out_of_range& e) {
-    switch (reduceOp) {
-      case ReduceOp::AVG:
-        TORCH_CHECK(false,
-                    "AVG requires NCCL 2.10+. The current version is ",
-                    NCCL_MAJOR, ".", NCCL_MINOR);
-        break;
-      case ReduceOp::BAND:
-        TORCH_CHECK(false, "Cannot use ReduceOp.BAND with NCCL");
-        break;
-      case ReduceOp::BOR:
-        TORCH_CHECK(false, "Cannot use ReduceOp.BOR with NCCL");
-        break;
-      case ReduceOp::BXOR:
-        TORCH_CHECK(false, "Cannot use ReduceOp.BXOR with NCCL");
-        break;
-      default:
-        TORCH_CHECK(false, "Unhandled ReduceOp");
-        break;
-    }
-  }
-}
 
 // Get the deviceList String from the list of devices
 std::string getKeyFromDevices(const std::vector<at::Device>& devices) {
@@ -592,26 +491,6 @@ ProcessGroupNCCL::ProcessGroupNCCL(
             << "\nTIMEOUT(ms): " << options_->timeout.count()
             << "\nUSE_HIGH_PRIORITY_STREAM: "
             << options_->is_high_priority_stream;
-
-#ifdef USE_NCCL_WITH_UCC
-  static std::once_flag initialize_ucc_lib_flag;
-  std::call_once(initialize_ucc_lib_flag, [&]{
-    uccLib_ = loadTorchUCC();
-    if (uccLib_ != nullptr) {
-      LOG(INFO) << "[Rank " << rank_  << "] torch_ucc.so loaded";
-    }
-  });
-
-  if (uccLib_ != nullptr) {
-    LOG(INFO) << "[Rank " << rank_  << "] torch_ucc.so loaded";
-    typedef c10::intrusive_ptr<ProcessGroup> fn(const c10::intrusive_ptr<Store>& store, int rank, int size);
-    auto createProcessGroupUCC = reinterpret_cast<fn*>(uccLib_->sym("createProcessGroupUCC"));
-    if (createProcessGroupUCC != nullptr) {
-      uccPG_ = createProcessGroupUCC(store, rank_, size_);
-      LOG(INFO) << "[Rank " << rank_  << "] ProcessGroupUCC created.";
-    }
-  }
-#endif
 }
 
 void ProcessGroupNCCL::runHealthCheck() {
@@ -691,19 +570,7 @@ ProcessGroupNCCL::~ProcessGroupNCCL() {
     workCleanupThread_.join();
   }
 
-  {
-    // Abort all NCCL Communicators on Process Group Destruction
-    std::lock_guard<std::mutex> lock(mutex_);
-    for (auto& it : devNCCLCommMap_) {
-      auto& ncclComms = it.second;
-
-      for (const auto& ncclComm : ncclComms) {
-        std::string abortReason =
-            c10::str("Process Group destroyed on rank ", rank_);
-        ncclComm->ncclCommAbort(abortReason);
-      }
-    }
-  }
+  // Abort all NCCL Communicators on Process Group Destruction
 }
 
 void ProcessGroupNCCL::abortTimedOutCollectives(
@@ -2455,18 +2322,5 @@ c10::intrusive_ptr<ProcessGroup::Work> ProcessGroupNCCL::_allgather_base(
       "nccl:_all_gather_base");
 }
 
-#ifdef USE_NCCL_WITH_UCC
-std::shared_ptr<at::DynamicLibrary> ProcessGroupNCCL::uccLib_ = nullptr;
-#endif
-
-bool ProcessGroupNCCL::isUCCAvailable() const {
-#ifdef USE_NCCL_WITH_UCC
-  return (uccPG_ != nullptr);
-#else
-  return false;
-#endif
-}
-
 } // namespace c10d
 
-#endif // USE_C10D_NCCL

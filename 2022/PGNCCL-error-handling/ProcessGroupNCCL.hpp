@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef USE_C10D_NCCL
-
 #include <chrono>
 #include <iostream>
 #include <list>
@@ -628,14 +626,7 @@ class TORCH_API ProcessGroupNCCL : public ProcessGroup {
 
   // Counting for the sequential number of NCCL collective call.
   uint64_t seq_{0};
-
-#ifdef USE_NCCL_WITH_UCC
-  // ProcessGroupUCC shared library handle and ProcessGroup pointer
-  static std::shared_ptr<at::DynamicLibrary> uccLib_;
-  c10::intrusive_ptr<ProcessGroup> uccPG_;
-#endif
 };
 
 } // namespace c10d
 
-#endif // USE_C10D_NCCL

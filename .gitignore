@@ -7,3 +7,5 @@ __pycache__
 *.qdrep
 *.sqlite
 a.out
+.vscode
+
