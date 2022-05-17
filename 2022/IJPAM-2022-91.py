@@ -1,5 +1,7 @@
 from regex import B
 
+def relu(x):
+    return max(0, x)
 
 def f(k, r):
     lambdas = [1.4257, 4.7754, 6.423, 9.3759]
@@ -11,11 +13,11 @@ def f(k, r):
     trB2 = sum(((f(x) - m) ** 2 for x in lambdas))
     a = ((n - 1) ** (2 * r - 1)) / (1 + (n - 1) ** (2 * r - 1))
     b = (a * trB2r) ** (1 / (2 * r))
-    f1high = round(m + b, 4)
-    fnlow = round(m - b, 4)
+    f1high = round(relu(m + b) ** (1 / k), 4)
+    fnlow = round(relu(m - b) ** (1 / k), 4)
     c = trB2 / n * (1 / (a * trB2r)) ** (1 / (2 * r))
-    f1low = round(m + c, 4)
-    fnhigh = round(m - c, 4)
+    f1low = round(relu(m + c) ** (1 / k), 4)
+    fnhigh = round(relu(m - c) ** (1 / k), 4)
     print(k, r, (f1low, f1high), (fnlow, fnhigh))
 
 for k in range(1, 4):
