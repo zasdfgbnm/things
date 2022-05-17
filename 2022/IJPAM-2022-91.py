@@ -3,7 +3,6 @@ from regex import B
 
 def f(k, r):
     lambdas = [1.4257, 4.7754, 6.423, 9.3759]
-    j = 0
     f = lambda x: x ** k
 
     n = len(lambdas)
