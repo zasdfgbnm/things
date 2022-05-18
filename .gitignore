@@ -8,4 +8,5 @@ __pycache__
 *.sqlite
 a.out
 .vscode
-
+*.lyx~
+*.lyx#

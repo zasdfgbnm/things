@@ -1,0 +1,63 @@
+%% LyX 2.3.6.1 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{amstext}
+\usepackage{babel}
+\begin{document}
+1. This manuscript is highly related to its reference {[}7{]}. For
+example, there are theorems looking very similar: Theorem 2.4 of this
+manuscript vs. Theorem 2.4 in {[}7{]}, and Theorem 2.5 of this manuscript
+vs. Theorem 2.6 in {[}7{]}. The author should elaborate more on what
+{[}7{]} does and what is the original contribution of this manuscript
+compared to {[}7{]}, instead of just ``... by adapting the work of
+Sharma et al. {[}7{]}'' and ``For $k=1$, we obtain the bounds of
+{[}7{]}''.
+
+2. In the abstract of this article, the author says, ``using a projection
+operator and a vector function of the eigenvalues...'', and in Definition
+2.1, the author defined $\mathrm{P}$. But I don't see how these are
+related to the rest of this article. I think both this sentence in
+the abstract and Definition 2.1 should be removed from this article.
+
+3. In Lemma 2.3, equation (1) is written with the language of inner
+product. But in the proof of this lemma, equation (8) is obtained.
+Although (1) and (8) are equivalent, (8) seems to be more useful in
+the proof of later theorems. So I think the author should eliminate
+the language of inner products and use (8) to replace (1) in Lemma
+2.3.
+
+4. The symbol $\left\langle \cdot,\cdot\right\rangle $ is defined
+in Lemma 2.3, but it is first used in Definition 2.2, which appears
+before Lemma 2.3. The author should move the definition of $\left\langle \cdot,\cdot\right\rangle $
+into Definition 2.2 if the author really wants to use the language
+of inner product in Definition 2.2 and Lemma 2.3. But according to
+my previous point, I think the language of inner product is not a
+good fit for this manuscript, so I prefer the author to remove it.
+
+5. Page 3 Equation (5) should be 
+\[
+\ldots=\left(f\left(\lambda_{j}\right)-m\right)+\sum_{i=1,i\neq j}^{n}\left(f\left(\lambda_{i}\right)-m\right)
+\]
+instead of
+\[
+\ldots=\left(f\left(\lambda_{i}\right)-m\right)+\sum_{i=1,i\neq j}^{n}\left(f\left(\lambda_{i}\right)-m\right)
+\]
+
+6. How to compute $m$ efficiently? The author needs to be explicit
+about this. This is important because if $m$ had to be computed from
+$f\left(\lambda_{i}\right)$, then the bounds in this manuscript would
+not be interesting because it was not computationally cheaper than
+the exact value. I believe $m$ could be computed efficiently as $m=\frac{1}{n}\text{trace}\left[f\left(A\right)\right]$,
+and I think the author should explicitly mention this in this paper.
+
+7. Page 4, the equation after equation (13), should be $m-f\left(\lambda_{n}\right)\geq\ldots$
+instead of $m-f\left(\lambda_{n}\right.\geq\ldots$
+
+8. I think the author should list the results from the other bounds
+that they compare to, especially {[}8{]}, in Table 1. {[}8{]} is a
+submitted paper that is not accepted yet, so I don't have access to
+it. Adding numbers from {[}8{]} will help me better understand how
+this work improves {[}8{]}.
+\end{document}

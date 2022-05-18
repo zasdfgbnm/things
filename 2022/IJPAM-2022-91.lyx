@@ -1,0 +1,233 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+1.
+ This manuscript is highly related to its reference [7].
+ For example, there are theorems looking very similar: Theorem 2.4 of this
+ manuscript vs.
+ Theorem 2.4 in [7], and Theorem 2.5 of this manuscript vs.
+ Theorem 2.6 in [7].
+ The author should elaborate more on what [7] does and what is the original
+ contribution of this manuscript compared to [7], instead of just 
+\begin_inset Quotes eld
+\end_inset
+
+...
+ by adapting the work of Sharma et al.
+ [7]
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+For 
+\begin_inset Formula $k=1$
+\end_inset
+
+, we obtain the bounds of [7]
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+2.
+ In the abstract of this article, the author says, 
+\begin_inset Quotes eld
+\end_inset
+
+using a projection operator and a vector function of the eigenvalues...
+\begin_inset Quotes erd
+\end_inset
+
+, and in Definition 2.1, the author defined 
+\begin_inset Formula $\mathrm{P}$
+\end_inset
+
+.
+ But I don't see how these are related to the rest of this article.
+ I think both this sentence in the abstract and Definition 2.1 should be
+ removed from this article.
+\end_layout
+
+\begin_layout Standard
+3.
+ In Lemma 2.3, equation (1) is written with the language of inner product.
+ But in the proof of this lemma, equation (8) is obtained.
+ Although (1) and (8) are equivalent, (8) seems to be more useful in the
+ proof of later theorems.
+ So I think the author should eliminate the language of inner products and
+ use (8) to replace (1) in Lemma 2.3.
+\end_layout
+
+\begin_layout Standard
+4.
+ The symbol 
+\begin_inset Formula $\left\langle \cdot,\cdot\right\rangle $
+\end_inset
+
+ is defined in Lemma 2.3, but it is first used in Definition 2.2, which appears
+ before Lemma 2.3.
+ The author should move the definition of 
+\begin_inset Formula $\left\langle \cdot,\cdot\right\rangle $
+\end_inset
+
+ into Definition 2.2 if the author really wants to use the language of inner
+ product in Definition 2.2 and Lemma 2.3.
+ But according to my previous point, I think the language of inner product
+ is not a good fit for this manuscript, so I prefer the author to remove
+ it.
+\end_layout
+
+\begin_layout Standard
+5.
+ Page 3 Equation (5) should be 
+\begin_inset Formula 
+\[
+\ldots=\left(f\left(\lambda_{j}\right)-m\right)+\sum_{i=1,i\neq j}^{n}\left(f\left(\lambda_{i}\right)-m\right)
+\]
+
+\end_inset
+
+instead of
+\begin_inset Formula 
+\[
+\ldots=\left(f\left(\lambda_{i}\right)-m\right)+\sum_{i=1,i\neq j}^{n}\left(f\left(\lambda_{i}\right)-m\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+6.
+ How to compute 
+\begin_inset Formula $m$
+\end_inset
+
+ efficiently? The author needs to be explicit about this.
+ This is important because if 
+\begin_inset Formula $m$
+\end_inset
+
+ had to be computed from 
+\begin_inset Formula $f\left(\lambda_{i}\right)$
+\end_inset
+
+, then the bounds in this manuscript would not be interesting because it
+ was not computationally cheaper than the exact value.
+ I believe 
+\begin_inset Formula $m$
+\end_inset
+
+ could be computed efficiently as 
+\begin_inset Formula $m=\frac{1}{n}\text{trace}\left[f\left(A\right)\right]$
+\end_inset
+
+, and I think the author should explicitly mention this in this paper.
+\end_layout
+
+\begin_layout Standard
+7.
+ Page 4, the equation after equation (13), should be 
+\begin_inset Formula $m-f\left(\lambda_{n}\right)\geq\ldots$
+\end_inset
+
+ instead of 
+\begin_inset Formula $m-f\left(\lambda_{n}\right.\geq\ldots$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+8.
+ I think the author should list the results from the other bounds that they
+ compare to, especially [8], in Table 1.
+ [8] is a submitted paper that is not accepted yet, so I don't have access
+ to it.
+ Adding numbers from [8] will help me better understand how this work improves
+ [8].
+\end_layout
+
+\end_body
+\end_document
