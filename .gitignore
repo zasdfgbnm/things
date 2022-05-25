@@ -10,3 +10,4 @@ a.out
 .vscode
 *.lyx~
 *.lyx#
+*.nsys-rep
