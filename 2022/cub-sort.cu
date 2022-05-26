@@ -63,8 +63,4 @@ int main() {
   }
 }
 
-// nsys nvprof nvcc -std=c++14 -gencode arch=compute_70,code=sm_70 -gencode
-// arch=compute_80,code=sm_80 -run cub-sort.cu
-
-// nvcc -std=c++14 -gencode arch=compute_70,code=sm_70 -gencode
-// arch=compute_80,code=sm_80 -run cub-sort.cu
+// nvcc -std=c++14 -gencode arch=compute_70,code=sm_70 -gencode arch=compute_80,code=sm_80 -run cub-sort.cu
