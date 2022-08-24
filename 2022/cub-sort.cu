@@ -58,6 +58,8 @@ void run(size_t N) {
 }
 
 int main() {
+  run(44'193'600);
+  run(26'516'160);
   for (size_t N = 10; N <= 100'000'000; N *= 10) {
     run(N);
   }
