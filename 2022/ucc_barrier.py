@@ -1,3 +1,5 @@
+# torchrun --nproc_per_node 2 ucc_barrier.py
+
 import torch
 import torch.distributed as dist
 import time
