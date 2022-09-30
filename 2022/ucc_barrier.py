@@ -8,9 +8,9 @@ rank = dist.get_rank()
 x = torch.zeros(5, device=f"cuda:{rank}")
 dist.all_reduce(x)
 
-time.sleep(rank)
+for i in range(10):
+    time.sleep(rank)
 
-print("1")
-dist.barrier()
-print("2")
-
+    print(f"{i}:1")
+    dist.barrier()
+    print(f"{i}:2")
