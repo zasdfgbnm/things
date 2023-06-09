@@ -1,6 +1,7 @@
 #include <utility>
 #include <type_traits>
 #include <iostream>
+#include <memory>
 
 struct HasOperatorHelper
 {
@@ -17,6 +18,38 @@ struct IsNullaryFunc
 
     template <typename T>
     static constexpr bool check(long)
+    {
+        return false;
+    }
+};
+
+struct HasArrowOperator
+{
+    template <typename T>
+    static constexpr auto check(int)
+        -> decltype((std::declval<decltype(&T::operator->)>()), true)
+    {
+        return true;
+    }
+
+    template <typename T>
+    static constexpr bool check(long)
+    {
+        return false;
+    }
+};
+
+struct TrueType
+{
+    static constexpr bool value()
+    {
+        return true;
+    }
+};
+
+struct FalseType
+{
+    static constexpr bool value()
     {
         return false;
     }
@@ -76,6 +109,18 @@ struct HasOperator
     constexpr bool operator[](HasOperatorHelper) const
     {
         return false;
+    }
+
+    template <typename T1 = int, std::enable_if_t<HasArrowOperator::check<T>(int{}), T1> = 0>
+    constexpr auto operator->() const -> TrueType *
+    {
+        return nullptr;
+    }
+
+    template <typename T1 = int, std::enable_if_t<!HasArrowOperator::check<T>(int{}), T1> = 0>
+    constexpr auto operator->() const -> FalseType *
+    {
+        return nullptr;
     }
 };
 
@@ -326,6 +371,10 @@ static_assert(!(has_operator<HasOperatorTestType>(has_operator<int>)));
 static_assert(has_operator<int[3]>[has_operator<int>]);
 static_assert(!(has_operator<int[3]>[has_operator<HasOperatorTestType>]));
 static_assert(!(has_operator<HasOperatorTestType>[has_operator<int>]));
+
+// Arrow operator
+static_assert(has_operator<std::unique_ptr<int>>->value());
+static_assert(!has_operator<int>->value());
 
 int main()
 {
