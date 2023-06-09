@@ -6,6 +6,22 @@ struct HasOperatorHelper
 {
 };
 
+struct IsNullaryFunc
+{
+    template <typename T>
+    static constexpr auto check(int)
+        -> decltype((std::declval<T>()()), true)
+    {
+        return true;
+    }
+
+    template <typename T>
+    static constexpr bool check(long)
+    {
+        return false;
+    }
+};
+
 template <typename T>
 struct HasOperator
 {
@@ -34,6 +50,12 @@ struct HasOperator
     }
 
     constexpr bool operator()(HasOperatorHelper) const
+    {
+        return false;
+    }
+
+    template <typename T1 = int, std::enable_if_t<!IsNullaryFunc::check<T>(int{}), T1> = 0>
+    constexpr bool operator()() const
     {
         return false;
     }
@@ -291,7 +313,13 @@ static_assert(!(has_operator<int &> >>= has_operator<HasOperatorTestType>));
 // Function call
 int foo(int);
 static_assert(has_operator<decltype(foo)>(has_operator<int>));
+static_assert(!(has_operator<decltype(foo)>()));
 static_assert(!(has_operator<decltype(foo)>(has_operator<HasOperatorTestType>)));
+static_assert(!(has_operator<HasOperatorTestType>(has_operator<int>)));
+int bar();
+static_assert(has_operator<decltype(bar)>());
+static_assert(!(has_operator<decltype(bar)>(has_operator<int>)));
+static_assert(!(has_operator<decltype(bar)>(has_operator<HasOperatorTestType>)));
 static_assert(!(has_operator<HasOperatorTestType>(has_operator<int>)));
 
 // Array index
