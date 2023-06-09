@@ -39,6 +39,22 @@ struct HasArrowOperator
     }
 };
 
+struct HasArrowStarOperator
+{
+    template <typename T>
+    static constexpr auto check(int)
+        -> decltype((std::declval<decltype(&T::operator->*)>()), true)
+    {
+        return true;
+    }
+
+    template <typename T>
+    static constexpr bool check(long)
+    {
+        return false;
+    }
+};
+
 struct TrueType
 {
     static constexpr bool value()
@@ -121,6 +137,18 @@ struct HasOperator
     constexpr auto operator->() const -> FalseType *
     {
         return nullptr;
+    }
+
+    template <typename T1, typename T2 = int, std::enable_if_t<HasArrowStarOperator::check<T>(int{}), T2> = 0>
+    constexpr bool operator->*(T1) const
+    {
+        return true;
+    }
+
+    template <typename T1, typename T2 = int, std::enable_if_t<!HasArrowStarOperator::check<T>(int{}), T2> = 0>
+    constexpr bool operator->*(T1) const
+    {
+        return false;
     }
 };
 
@@ -375,6 +403,22 @@ static_assert(!(has_operator<HasOperatorTestType>[has_operator<int>]));
 // Arrow operator
 static_assert(has_operator<std::unique_ptr<int>>->value());
 static_assert(!has_operator<int>->value());
+
+// Arrow star operator
+struct OverloadArrowStar
+{
+    auto operator->*(int OverloadArrowStar::*memberPtr) const -> int *
+    {
+        return nullptr;
+    }
+};
+
+static_assert(has_operator<OverloadArrowStar>->*2);
+static_assert(has_operator<OverloadArrowStar>->*true);
+static_assert(has_operator<OverloadArrowStar>->*has_operator<int>);
+static_assert(!(has_operator<int>->*2));
+static_assert(!(has_operator<int>->*true));
+static_assert(!(has_operator<int>->*has_operator<OverloadArrowStar>));
 
 int main()
 {
