@@ -96,8 +96,6 @@ struct HasOperator
         return false;                                                \
     }
 
-// TODO [], (), assignments
-
 // Unary operators
 DEFINE_UNARY_OP(+);
 DEFINE_UNARY_OP(-);
