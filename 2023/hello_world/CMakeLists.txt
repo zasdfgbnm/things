@@ -6,7 +6,6 @@ target_link_libraries(single_static -static)
 add_library(hello SHARED helloworld.cpp)
 
 add_library(hello_static STATIC helloworld.cpp)
-# target_link_libraries(hello_static -static)
 
 add_executable(multi_dynamic main.cpp)
 target_link_libraries(multi_dynamic hello)
